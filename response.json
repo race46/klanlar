@@ -1,0 +1,74 @@
+[
+    {
+        "response": {
+            "villages": [
+                {
+                    "id": "43413",
+                    "x": "700",
+                    "y": "481",
+                    "name": "REAL BERTIZ FC'nin k\u00f6y\u00fc",
+                    "player_id": "5026067",
+                    "bonus_id": null,
+                    "tile_id": null,
+                    "village_type": "standard",
+                    "player_name": "REAL BERTIZ FC",
+                    "points": "78",
+                    "distance": "0",
+                    "event_special": "0",
+                    "image": "https:\/\/dstr.innogamescdn.com\/asset\/0be64fad\/graphic\/map\/icon\/v1_icon.png"
+                }
+            ],
+            "request_id": 6,
+            "more": false,
+            "offset": 0
+        }
+    },
+    {
+        "response": {
+            "villages": [
+                {
+                    "id": "42340",
+                    "x": "700",
+                    "y": "480",
+                    "name": "Misafir022058'nin k\u00f6y\u00fc",
+                    "player_id": "849022058",
+                    "bonus_id": null,
+                    "tile_id": null,
+                    "village_type": "standard",
+                    "player_name": "Misafir022058",
+                    "points": "26",
+                    "distance": "1",
+                    "event_special": "0",
+                    "image": "https:\/\/dstr.innogamescdn.com\/asset\/0be64fad\/graphic\/map\/icon\/v1_icon.png"
+                }
+            ],
+            "request_id": 9,
+            "more": false,
+            "offset": 0
+        }
+    },
+    {
+        "response": {
+            "villages": [
+                {
+                    "id": "41821",
+                    "x": "701",
+                    "y": "481",
+                    "name": "Barbar K\u00f6y\u00fc",
+                    "player_id": "0",
+                    "bonus_id": null,
+                    "tile_id": null,
+                    "village_type": "standard",
+                    "player_name": null,
+                    "points": "26",
+                    "distance": "1",
+                    "event_special": "0",
+                    "image": "https:\/\/dstr.innogamescdn.com\/asset\/0be64fad\/graphic\/map\/icon\/v1_left_icon.png"
+                }
+            ],
+            "request_id": 6,
+            "more": false,
+            "offset": 0
+        }
+    }
+]
