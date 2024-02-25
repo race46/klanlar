@@ -161,7 +161,11 @@ if (location.href.startsWith('https://tr83.klanlar.org/game.php') && sessionStor
     for(let c of Object.keys(config)){
       tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0,-1))
       
-      if(tot < config[c]) await sleep(10000000000)
+      if(tot < config[c]) {
+        sessionStorage.setItem('attack', 'false')
+
+        await sleep(10000000000)
+      }
 
       if(tot > 0)
       document.querySelector("#" + c).value = config[c]

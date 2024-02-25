@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Button Counter Extension",
+    "name": "Kumandan Merenek",
     "version": "1.0",
-    "description": "Counts the number of buttons on the current page.",
+    "description": "Savulun bre gafiller",
     "permissions": ["activeTab"],
     "browser_action": {
       "default_icon": {
