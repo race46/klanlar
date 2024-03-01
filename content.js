@@ -152,7 +152,7 @@ async function attack() {
 
 
 
-  if (location.href.startsWith('https://tr84.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
+  if (location.href.includes('.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
 
     console.log('attack')
     if (location.href.endsWith('confirm')) {
