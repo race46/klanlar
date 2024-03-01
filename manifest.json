@@ -19,7 +19,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://tr83.klanlar.org/**"],
+        "matches": ["https://*.klanlar.org/**"],
         "js": ["content.js"]
       }
     ]

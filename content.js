@@ -8,19 +8,19 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
     location.reload()
 
-    
+
   }
 
   if (request.action === 'stop') {
     barbars = JSON.parse(localStorage.getItem('barbars'))
 
-    sessionStorage.setItem('attack', 'false')    
+    sessionStorage.setItem('attack', 'false')
   }
 
 
   if (request.action === 'config') {
     const userInput = prompt("put you config");
-    
+
 
     localStorage.setItem('config', userInput)
   }
@@ -39,8 +39,8 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
     console.log(x, y);
 
-    async function sleep(time){
-      return new Promise((res,rej)=>{
+    async function sleep(time) {
+      return new Promise((res, rej) => {
         setTimeout(() => {
           res(true)
         }, time);
@@ -53,9 +53,24 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       console.log(x, y);
 
       search++
-     
 
-      resp = await fetch(`https://tr83.klanlar.org/game.php?village=43413&screen=api&ajax=target_selection&input=${x}%7C${y}&type=coord&request_id=${req_id++}&limit=10&offset=0`, {
+      urll = new URL(location.href)
+
+      query = {}
+
+      for (i of urll.search.substring(1).split('&')) {
+        ss = i.split('=');
+        query[ss[0]] = ss[1]
+      }
+
+
+      final = `${urll.origin}?village=${query['village']}`
+
+      // console.log(final)
+
+
+
+      resp = await fetch(`https://tr84.klanlar.org/game.php?village=267&screen=api&ajax=target_selection&input=${x}%7C${y}&type=coord&request_id=${req_id++}&limit=10&offset=0`, {
         "headers": {
           "accept": "application/json, text/javascript, */*; q=0.01",
           "accept-language": "en-US,en;q=0.8",
@@ -69,6 +84,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
           "tribalwars-ajax": "1",
           "x-requested-with": "XMLHttpRequest"
         },
+        "referrer": "https://tr84.klanlar.org/game.php?village=267&screen=place",
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": null,
         "method": "GET",
@@ -78,15 +94,22 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
       resp = await resp.json()
 
-      if (resp.response.villages[0] && (resp.response.villages[0].name == 'Barbar K\u00f6y\u00fc')){
+      // console.log(resp)
+
+      if (resp.response.villages[0] && (resp.response.villages[0].name == 'Barbar K\u00f6y\u00fc' || resp.response.villages[0].name == 'Bonus köyü')) {
         str = localStorage.getItem('barbars') || "[]"
         barbars = JSON.parse(str)
-        barbars.push({x:resp.response.villages[0].x, y:resp.response.villages[0].y})
+        barbars.push({ x: resp.response.villages[0].x, y: resp.response.villages[0].y })
         localStorage.setItem('barbars', JSON.stringify(barbars))
+        console.log(resp.response.villages[0])
 
       }
 
-      s = Math.floor(Math.random() * 4000) + 1000
+      if(resp.response.villages[0]){
+        console.log(resp.response.villages[0].name)
+      }
+
+      s = Math.floor(Math.random() * 1000) + 250
       str = localStorage.getItem('barbars') || "[]"
       barbars = JSON.parse(str)
       document.title = 'search: ' + search + ' found: ' + barbars.length
@@ -127,9 +150,9 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 });
 
 
-async function attack(){
-  async function sleep(time){
-    return new Promise((res,rej)=>{
+async function attack() {
+  async function sleep(time) {
+    return new Promise((res, rej) => {
       setTimeout(() => {
         res(true)
       }, time);
@@ -140,44 +163,44 @@ async function attack(){
 
 
 
-if (location.href.startsWith('https://tr83.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true'){
- 
-  console.log('attack')
-  if(location.href.endsWith('confirm')){
+  if (location.href.startsWith('https://tr84.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
+
+    console.log('attack')
+    if (location.href.endsWith('confirm')) {
       document.querySelector('#troop_confirm_submit').click()
-  }else{
+    } else {
 
-    count = parseInt(sessionStorage.getItem("count"))
+      count = parseInt(sessionStorage.getItem("count"))
 
-    barbar = JSON.parse(localStorage.getItem('barbars'))[count]
+      barbar = JSON.parse(localStorage.getItem('barbars'))[count]
 
-    console.log(barbar, count)
-    document.querySelector('#place_target > input').value = barbar.x + '|' + barbar.y
+      console.log(barbar, count)
+      document.querySelector('#place_target > input').value = barbar.x + '|' + barbar.y
 
-    sessionStorage.setItem('count', ''+(count+1))
+      sessionStorage.setItem('count', '' + (count + 1))
 
-    config = JSON.parse(localStorage.getItem('config'))
+      config = JSON.parse(localStorage.getItem('config'))
 
-    for(let c of Object.keys(config)){
-      tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0,-1))
-      
-      if(tot < config[c]) {
-        sessionStorage.setItem('attack', 'false')
+      for (let c of Object.keys(config)) {
+        tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
 
-        await sleep(10000000000)
+        if (tot < config[c]) {
+          sessionStorage.setItem('attack', 'false')
+
+          await sleep(10000000000)
+        }
+
+        if (tot > 0)
+          document.querySelector("#" + c).value = config[c]
       }
 
-      if(tot > 0)
-      document.querySelector("#" + c).value = config[c]
-    }    
-
-    await sleep(Math.floor(Math.random() * 500) + 500)
-    document.querySelector('#target_attack').click()
+      await sleep(Math.floor(Math.random() * 500) + 500)
+      document.querySelector('#target_attack').click()
+    }
   }
-}
-else{
-      console.log('no attack')
-}
+  else {
+    console.log('no attack')
+  }
 }
 attack()
 
