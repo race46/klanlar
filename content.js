@@ -159,9 +159,10 @@ async function attack() {
       document.querySelector('#troop_confirm_submit').click()
     } else {
 
-      count = parseInt(sessionStorage.getItem("count"))
+      count = parseInt(sessionStorage.getItem("count") || "0")
 
-      barbar = JSON.parse(localStorage.getItem('barbars'))[count]
+      barbars = JSON.parse(localStorage.getItem('barbars'))
+      barbar = barbars[count % barbars.length]
 
       console.log(barbar, count)
       document.querySelector('#place_target > input').value = barbar.x + '|' + barbar.y
