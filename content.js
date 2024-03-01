@@ -54,23 +54,12 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
       search++
 
-      urll = new URL(location.href)
-
-      query = {}
-
-      for (i of urll.search.substring(1).split('&')) {
-        ss = i.split('=');
-        query[ss[0]] = ss[1]
-      }
+      url = location.href
+      base = url.split('?')[0]
+      village = url.split('?')[1].split('&').filter(q => q.startsWith('village'))[0]
 
 
-      final = `${urll.origin}?village=${query['village']}`
-
-      // console.log(final)
-
-
-
-      resp = await fetch(`https://tr84.klanlar.org/game.php?village=267&screen=api&ajax=target_selection&input=${x}%7C${y}&type=coord&request_id=${req_id++}&limit=10&offset=0`, {
+      resp = await fetch(`${base}?${village}&screen=api&ajax=target_selection&input=${x}%7C${y}&type=coord&request_id=${req_id++}&limit=10&offset=0`, {
         "headers": {
           "accept": "application/json, text/javascript, */*; q=0.01",
           "accept-language": "en-US,en;q=0.8",
@@ -84,7 +73,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
           "tribalwars-ajax": "1",
           "x-requested-with": "XMLHttpRequest"
         },
-        "referrer": "https://tr84.klanlar.org/game.php?village=267&screen=place",
+        "referrer": `${base}?${village}&screen=place`,
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": null,
         "method": "GET",

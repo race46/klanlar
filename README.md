@@ -1,4 +1,4 @@
-# 
+# Hack the Clans, Fuck the Barbarians
 
 ## Example Config
 ```
