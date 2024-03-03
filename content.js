@@ -4,7 +4,6 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
     console.log('attack')
     sessionStorage.setItem('attack', 'true')
-    sessionStorage.setItem('count', '0')
 
     location.reload()
 
@@ -159,7 +158,7 @@ async function attack() {
       document.querySelector('#troop_confirm_submit').click()
     } else {
 
-      count = parseInt(sessionStorage.getItem("count") || "0")
+      count = parseInt(localStorage.getItem("count") || "0")
 
       barbars = JSON.parse(localStorage.getItem('barbars'))
       barbar = barbars[count % barbars.length]
@@ -167,7 +166,7 @@ async function attack() {
       console.log(barbar, count)
       document.querySelector('#place_target > input').value = barbar.x + '|' + barbar.y
 
-      sessionStorage.setItem('count', '' + (count + 1))
+      localStorage.setItem('count', '' + (count + 1))
 
       config = JSON.parse(localStorage.getItem('config'))
 
