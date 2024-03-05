@@ -139,6 +139,13 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
 
 async function attack() {
+
+  isBotPro = document.querySelectorAll('iframe').length > 0
+
+  if(isBotPro){
+    location.href = 'https://www.fuck.com'
+  }
+
   async function sleep(time) {
     return new Promise((res, rej) => {
       setTimeout(() => {
@@ -158,6 +165,22 @@ async function attack() {
       document.querySelector('#troop_confirm_submit').click()
     } else {
 
+      config = JSON.parse(localStorage.getItem('config'))
+
+      for (let c of Object.keys(config)) {
+        tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
+
+        if (tot < config[c]) {
+          // sessionStorage.setItem('attack', 'false')
+
+          await sleep(1000 * 60 * 2)
+          location.reload()
+        }
+
+        if (tot > 0)
+          document.querySelector("#" + c).value = config[c]
+      }
+
       count = parseInt(localStorage.getItem("count") || "0")
 
       barbars = JSON.parse(localStorage.getItem('barbars'))
@@ -168,20 +191,7 @@ async function attack() {
 
       localStorage.setItem('count', '' + (count + 1))
 
-      config = JSON.parse(localStorage.getItem('config'))
 
-      for (let c of Object.keys(config)) {
-        tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
-
-        if (tot < config[c]) {
-          sessionStorage.setItem('attack', 'false')
-
-          await sleep(10000000000)
-        }
-
-        if (tot > 0)
-          document.querySelector("#" + c).value = config[c]
-      }
 
       await sleep(Math.floor(Math.random() * 500) + 500)
       document.querySelector('#target_attack').click()
