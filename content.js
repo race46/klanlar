@@ -205,3 +205,42 @@ attack()
 
 
 console.log('klanlar')
+
+
+function deleteBarbarReports(){
+  if(!location.href.includes('screen=report')) return;
+
+  isBotPro = document.querySelectorAll('iframe').length > 0
+
+  if(isBotPro){
+    location.href = 'https://www.fuck.com'
+  }
+
+
+  del_count = 0
+  table = document.querySelector('#report_list')
+  rows = table.querySelectorAll('tr')
+
+  for(let i = 1; i < rows.length; i++){
+      try{
+      inner = table.querySelectorAll('tr')[i].querySelector('span.quickedit-label').innerText
+      if(inner.includes("Bonus köyü")|| inner.includes("Barbar Köyü")){
+        table.querySelectorAll('tr')[i].querySelector('input').click()
+        del_count++
+      }
+      }catch(e){
+
+      }
+      
+  }
+
+  setTimeout(() => {
+    if(del_count)
+    document.querySelector('#content_value > table > tbody > tr > td:nth-child(2) > form:nth-child(4) > table:nth-child(2) > tbody > tr > td:nth-child(1) > input.btn.btn-cancel').click()
+    else{
+      location.reload
+    }
+  }, 20000);
+}
+
+deleteBarbarReports()
