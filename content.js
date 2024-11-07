@@ -97,7 +97,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
         console.log(resp.response.villages[0].name)
       }
 
-      s = Math.floor(Math.random() * 1000) + 250
+      s = Math.floor(Math.random() * 100) + 250
       str = localStorage.getItem('barbars') || "[]"
       barbars = JSON.parse(str)
       document.title = 'search: ' + search + ' found: ' + barbars.length
@@ -140,11 +140,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
 async function attack() {
 
-  isBotPro = document.querySelectorAll('iframe').length > 0
 
-  if(isBotPro){
-    location.href = 'https://www.fuck.com'
-  }
 
   async function sleep(time) {
     return new Promise((res, rej) => {
@@ -156,7 +152,10 @@ async function attack() {
   s = Math.floor(Math.random() * 4000) + 1000
   await sleep(s)
 
-
+  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
+  if(isBotPro){
+    location.href = 'https://www.fuck.com'
+  }
 
   if (location.href.includes('.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
 
@@ -166,13 +165,13 @@ async function attack() {
     } else {
 
       config = JSON.parse(localStorage.getItem('config'))
-
+      console.log(config)
       for (let c of Object.keys(config)) {
         tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
-
+        console.log(c, tot)
         if (tot < config[c]) {
           // sessionStorage.setItem('attack', 'false')
-
+          console.log(config[c])
           await sleep(1000 * 60 * 2)
           location.reload()
         }
@@ -210,8 +209,7 @@ console.log('klanlar')
 function deleteBarbarReports(){
   if(!location.href.includes('screen=report')) return;
 
-  isBotPro = document.querySelectorAll('iframe').length > 0
-
+  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
   if(isBotPro){
     location.href = 'https://www.fuck.com'
   }
@@ -235,6 +233,10 @@ function deleteBarbarReports(){
   }
 
   setTimeout(() => {
+    isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
+    if(isBotPro){
+      location.href = 'https://www.fuck.com'
+    }
     if(del_count)
     document.querySelector('#content_value > table > tbody > tr > td:nth-child(2) > form:nth-child(4) > table:nth-child(2) > tbody > tr > td:nth-child(1) > input.btn.btn-cancel').click()
     else{
