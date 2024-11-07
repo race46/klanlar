@@ -153,7 +153,7 @@ async function attack() {
   await sleep(s)
 
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
-  if(isBotPro){
+  if(isBotPro && sessionStorage.getItem('attack')){
     location.href = 'https://www.fuck.com'
   }
 
@@ -210,7 +210,7 @@ function deleteBarbarReports(){
   if(!location.href.includes('screen=report')) return;
 
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
-  if(isBotPro){
+  if(isBotPro && sessionStorage.getItem('attack')){
     location.href = 'https://www.fuck.com'
   }
 
