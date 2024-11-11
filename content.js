@@ -161,7 +161,12 @@ async function attack() {
 
     console.log('attack')
     if (location.href.endsWith('confirm')) {
-      document.querySelector('#troop_confirm_submit').click()
+      const oyuncu = document.querySelector('table.vis').querySelectorAll('td')[2].innerHTML == 'Oyuncu:'
+      if(oyuncu){
+        location.href = location.href.substring(0, location.href.length - 12)
+      }else{
+          document.querySelector('#troop_confirm_submit').click()
+      }
     } else {
 
       config = JSON.parse(localStorage.getItem('config'))
