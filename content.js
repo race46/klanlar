@@ -138,10 +138,38 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 });
 
 
+
+async function handle_report(){
+  const storage = JSON.parse(localStorage.getItem("report_bots") || "{}")
+
+  const lastHandle = Date.now()
+  storage.getItem()
+
+  url = location.href.replace("place", "report")
+  const res = await fetch(url)
+  const data = await res.text()
+
+  const dom = new DOMParser()
+  const doc = dom.parseFromString(data, 'text/html');
+
+  rows = doc.getElementById('report_list').querySelectorAll('tr')
+
+  for(const row of rows){
+    try{
+      const text = row.querySelector('a > span').innerHTML
+      const status = row.querySelectorAll('img')[1].src.includes('green')
+      const regex = /\b\d{3}\|\d{3}\b/g;
+      const target = text.match(regex)[1];
+      storage[target] = status
+      console.log(target, status)
+    }catch(e){
+
+    }
+  }
+  localStorage.setItem("report_bots", JSON.stringify(storage))
+}
+
 async function attack() {
-
-
-
   async function sleep(time) {
     return new Promise((res, rej) => {
       setTimeout(() => {
@@ -151,6 +179,8 @@ async function attack() {
   }
   s = Math.floor(Math.random() * 4000) + 1000
   await sleep(s)
+
+  // await handle_report()
 
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
   if(isBotPro && sessionStorage.getItem('attack') == 'true'){
