@@ -3,10 +3,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     barbars = JSON.parse(localStorage.getItem('barbars'))
 
     sessionStorage.setItem('attack', 'true')
-
     location.reload()
-
-
   }
 
   if (request.action === 'stop') {
@@ -158,7 +155,7 @@ async function handle_report(){
       const text = row.querySelector('a > span').innerHTML
       const status = row.querySelectorAll('img')[1].src.includes('green')
       const regex = /\b\d{3}\|\d{3}\b/g;
-      const target = text.match(regex)[1];
+      const target = "bot_" + text.match(regex)[1].replace('|', '');
       storage[target] = status
     }catch(e){
 
@@ -168,12 +165,13 @@ async function handle_report(){
 }
 
 function doesHaveEnoughArmy(config){
+  isIt = true
   Object.keys(config).forEach(c => {
     tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
-    if(tot < config[c]) return false
+    if(tot < config[c]) isIt = false
   })
 
-  return true
+  return isIt
 }
 
 function fillTable(config){
@@ -184,15 +182,16 @@ function fillTable(config){
 }
 
 function isFirstAttack(village){
-  reports = JSON.parse(localStorage.getItem("report_bots") || "{}")
-  return reports[`${village.x}|${village.y}`] !== false
+  const reports = JSON.parse(localStorage.getItem("report_bots") || "{}")
+  const key = `bot_${village.x}${village.y}`
+  return reports[key] !== false
 }
 
 function getNextVillage(){
-  count = parseInt(localStorage.getItem("count") || "0")
+  const count = parseInt(localStorage.getItem("count") || "0")
 
-  barbars = JSON.parse(localStorage.getItem('barbars'))
-  village = barbars[count % barbars.length]
+  const barbars = JSON.parse(localStorage.getItem('barbars'))
+  const village = barbars[count % barbars.length]
 
   return village
 }
@@ -234,9 +233,9 @@ async function attack() {
           document.querySelector('#troop_confirm_submit').click()
       }
     } else {
-
       config = JSON.parse(localStorage.getItem('config'))
       village = getNextVillage()
+
       const isFirstConfig = isFirstAttack(village)
       config = isFirstConfig ? config[0] : config[1]
 
