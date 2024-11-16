@@ -2,7 +2,6 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   if (request.action === 'countButtons') {
     barbars = JSON.parse(localStorage.getItem('barbars'))
 
-    console.log('attack')
     sessionStorage.setItem('attack', 'true')
 
     location.reload()
@@ -35,9 +34,6 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
     req_id = 1
 
-
-    console.log(x, y);
-
     async function sleep(time) {
       return new Promise((res, rej) => {
         setTimeout(() => {
@@ -49,7 +45,6 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     search = 0
 
     async function getCord(x, y) {
-      console.log(x, y);
 
       search++
 
@@ -82,19 +77,13 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
       resp = await resp.json()
 
-      // console.log(resp)
 
       if (resp.response.villages[0] && (resp.response.villages[0].name == 'Barbar K\u00f6y\u00fc' || resp.response.villages[0].name == 'Bonus köyü')) {
         str = localStorage.getItem('barbars') || "[]"
         barbars = JSON.parse(str)
         barbars.push({ x: resp.response.villages[0].x, y: resp.response.villages[0].y })
         localStorage.setItem('barbars', JSON.stringify(barbars))
-        console.log(resp.response.villages[0])
 
-      }
-
-      if(resp.response.villages[0]){
-        console.log(resp.response.villages[0].name)
       }
 
       s = Math.floor(Math.random() * 100) + 250
@@ -131,19 +120,29 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
         yy += 1;
       }
 
-      console.log("");
 
     }
   }
 });
 
+async function sleep(time) {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(true)
+    }, time);
+  })
+}
 
 
 async function handle_report(){
+
+  const now = Date.now()
+  const next_report = parseInt(localStorage.getItem("next_report") || "0")
+  if(now < next_report) return
+
+  localStorage.setItem("next_report", ""+(now + Math.floor(Math.random() * 50000) + 50000))
   const storage = JSON.parse(localStorage.getItem("report_bots") || "{}")
 
-  const lastHandle = Date.now()
-  storage.getItem()
 
   url = location.href.replace("place", "report")
   const res = await fetch(url)
@@ -161,7 +160,6 @@ async function handle_report(){
       const regex = /\b\d{3}\|\d{3}\b/g;
       const target = text.match(regex)[1];
       storage[target] = status
-      console.log(target, status)
     }catch(e){
 
     }
@@ -169,27 +167,65 @@ async function handle_report(){
   localStorage.setItem("report_bots", JSON.stringify(storage))
 }
 
-async function attack() {
-  async function sleep(time) {
-    return new Promise((res, rej) => {
-      setTimeout(() => {
-        res(true)
-      }, time);
-    })
-  }
-  s = Math.floor(Math.random() * 4000) + 1000
-  await sleep(s)
+function doesHaveEnoughArmy(config){
+  Object.keys(config).forEach(c => {
+    tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
+    if(tot < config[c]) return false
+  })
 
-  // await handle_report()
+  return true
+}
 
+function fillTable(config){
+  Object.keys(config).forEach(c => {
+    if(config[c])
+    document.querySelector("#" + c).value = config[c]
+  })
+}
+
+function isFirstAttack(village){
+  reports = JSON.parse(localStorage.getItem("report_bots") || "{}")
+  return reports[`${village.x}|${village.y}`] !== false
+}
+
+function getNextVillage(){
+  count = parseInt(localStorage.getItem("count") || "0")
+
+  barbars = JSON.parse(localStorage.getItem('barbars'))
+  village = barbars[count % barbars.length]
+
+  return village
+}
+
+async function attackButtonClick(village){
+  incrementCount()
+  document.querySelector('#place_target > input').value = village.x + '|' + village.y
+  await sleep(Math.floor(Math.random() * 1500) + 1500)
+  document.querySelector('#target_attack').click()
+}
+
+function botProtection(){
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
   if(isBotPro && sessionStorage.getItem('attack') == 'true'){
     location.href = 'https://www.fuck.com'
   }
+}
+
+function incrementCount(){
+  count = parseInt(localStorage.getItem("count") || "0")
+  localStorage.setItem('count', '' + (count + 1))
+}
+
+async function attack() {
+  await sleep(Math.floor(Math.random() * 4000) + 1000)
+
+
+  botProtection()
+
 
   if (location.href.includes('.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
+    await handle_report()
 
-    console.log('attack')
     if (location.href.endsWith('confirm')) {
       const oyuncu = document.querySelector('table.vis').querySelectorAll('td')[2].innerHTML == 'Oyuncu:'
       if(oyuncu){
@@ -200,46 +236,33 @@ async function attack() {
     } else {
 
       config = JSON.parse(localStorage.getItem('config'))
-      console.log(config)
-      for (let c of Object.keys(config)) {
-        tot = parseInt(document.querySelector('#' + c.replace('_input', 's_entry_all')).innerText.slice(1).slice(0, -1))
-        console.log(c, tot)
-        if (tot < config[c]) {
-          // sessionStorage.setItem('attack', 'false')
-          console.log(config[c])
-          await sleep(1000 * 60 * 2)
+      village = getNextVillage()
+      const isFirstConfig = isFirstAttack(village)
+      config = isFirstConfig ? config[0] : config[1]
+
+      enoughArmy = doesHaveEnoughArmy(config)
+
+      if(isFirstConfig){
+        if(!enoughArmy){
+          await sleep(120000)
           location.reload()
         }
 
-        if (tot > 0)
-          document.querySelector("#" + c).value = config[c]
+      }else{
+        if(!enoughArmy) {
+          incrementCount()
+          location.reload()
+        }
       }
 
-      count = parseInt(localStorage.getItem("count") || "0")
-
-      barbars = JSON.parse(localStorage.getItem('barbars'))
-      barbar = barbars[count % barbars.length]
-
-      console.log(barbar, count)
-      document.querySelector('#place_target > input').value = barbar.x + '|' + barbar.y
-
-      localStorage.setItem('count', '' + (count + 1))
-
-
-
-      await sleep(Math.floor(Math.random() * 500) + 500)
-      document.querySelector('#target_attack').click()
+      fillTable(config)
+      attackButtonClick(village)
     }
   }
   else {
-    console.log('no attack')
   }
 }
 attack()
-
-
-console.log('klanlar')
-
 
 function deleteBarbarReports(){
   if(!location.href.includes('screen=report')) return;
