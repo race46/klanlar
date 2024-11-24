@@ -21,7 +21,11 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   }
 
   if (request.action === 'findBarbars') {
+    const dist = parseFloat(prompt('what is the max distance'))
+    
     localStorage.setItem('barbars', '')
+    localStorage.setItem('count', '0')
+
 
     document.title = 'found: 0'
 
@@ -40,6 +44,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     }
 
     search = 0
+    found = 0
 
     async function getCord(x, y) {
 
@@ -86,39 +91,69 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
       s = Math.floor(Math.random() * 100) + 250
       str = localStorage.getItem('barbars') || "[]"
       barbars = JSON.parse(str)
-      document.title = 'search: ' + search + ' found: ' + barbars.length
+      found = barbars.length
 
       await sleep(s)
 
     };
 
-
+    const all_search = []
     for (let i = 1; i < 100; i++) {
       xx = x - i;
       yy = y + i;
 
       for (let j = 0; j < 2 * i; j++) {
-        await getCord(xx, yy);
+        // await getCord(xx, yy);
+        distance = (x - xx) * (x - xx) + (y - yy) * (y - yy)
+        all_search.push({
+          x: xx,
+          y: yy,
+          distance: distance
+        })
         xx += 1;
       }
 
       for (let j = 0; j < 2 * i; j++) {
-        await getCord(xx, yy);
+        // await getCord(xx, yy);
+        distance = (x - xx) * (x - xx) + (y - yy) * (y - yy)
+        all_search.push({
+          x: xx,
+          y: yy,
+          distance: distance
+        })
         yy -= 1;
       }
 
       for (let j = 0; j < 2 * i; j++) {
-        await getCord(xx, yy);
+        // await getCord(xx, yy);
+        distance = (x - xx) * (x - xx) + (y - yy) * (y - yy)
+        all_search.push({
+          x: xx,
+          y: yy,
+          distance: distance
+        })
         xx -= 1;
       }
 
       for (let j = 0; j < 2 * i; j++) {
-        await getCord(xx, yy);
+        // await getCord(xx, yy);
+        distance = (x - xx) * (x - xx) + (y - yy) * (y - yy)
+        all_search.push({
+          x: xx,
+          y: yy,
+          distance: distance
+        })
         yy += 1;
       }
-
-
     }
+    const filtered = all_search.filter(i => (i.distance <= dist * dist)).sort((a,b) => a.distance - b.distance)
+
+    for(let i = 0; i < filtered.length; i++){
+      await getCord(filtered[i].x, filtered[i].y)
+      document.title = '🔍: ' + search + '/'+filtered.length+' ✅: ' + barbars.length
+    }
+
+    alert('search completed')
   }
 });
 
