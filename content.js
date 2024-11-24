@@ -150,7 +150,8 @@ async function handle_report(){
 
   rows = doc.getElementById('report_list').querySelectorAll('tr')
 
-  for(const row of rows){
+  for(let i = rows.length - 2; i > 0; i--){
+    const row = rows[i]
     try{
       const text = row.querySelector('a > span').innerHTML
       const status = row.querySelectorAll('img')[1].src.includes('green')
@@ -223,7 +224,6 @@ async function attack() {
 
 
   if (location.href.includes('.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
-    await handle_report()
 
     if (location.href.endsWith('confirm')) {
       const oyuncu = document.querySelector('table.vis').querySelectorAll('td')[2].innerHTML == 'Oyuncu:'
@@ -233,9 +233,10 @@ async function attack() {
           document.querySelector('#troop_confirm_submit').click()
       }
     } else {
+      await handle_report()
+      // while(isFirstAttack(getNextVillage()))incrementCount()
       config = JSON.parse(localStorage.getItem('config'))
       village = getNextVillage()
-
       const isFirstConfig = isFirstAttack(village)
       config = isFirstConfig ? config[0] : config[1]
 
@@ -289,17 +290,17 @@ function deleteBarbarReports(){
       
   }
 
-  setTimeout(() => {
-    isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
-    if(isBotPro){
-      location.href = 'https://www.fuck.com'
-    }
-    if(del_count)
-    document.querySelector('#content_value > table > tbody > tr > td:nth-child(2) > form:nth-child(4) > table:nth-child(2) > tbody > tr > td:nth-child(1) > input.btn.btn-cancel').click()
-    else{
-      location.reload
-    }
-  }, 20000);
+  // setTimeout(() => {
+  //   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
+  //   if(isBotPro){
+  //     location.href = 'https://www.fuck.com'
+  //   }
+  //   if(del_count)
+  //   document.querySelector('#content_value > table > tbody > tr > td:nth-child(2) > form:nth-child(4) > table:nth-child(2) > tbody > tr > td:nth-child(1) > input.btn.btn-cancel').click()
+  //   else{
+  //     location.reload
+  //   }
+  // }, 20000);
 }
 
 deleteBarbarReports()
