@@ -20,6 +20,21 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     localStorage.setItem('config', userInput)
   }
 
+  if (request.action === 'assistant') {
+    const table = document.getElementById('plunder_list').querySelector('tbody')
+    let i = 2
+    const inter =setInterval(() => {
+      try{
+      const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
+      if(isGreen) table.children[i].querySelector('td:nth-child(9) > a').click()
+      
+      i++
+      }catch(e){
+        clearInterval(inter)
+      }
+    }, 350);
+  }
+
   if (request.action === 'findBarbars') {
     const dist = parseFloat(prompt('what is the max distance'))
     

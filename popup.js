@@ -45,6 +45,7 @@ function setColor(color){
     document.getElementById('findBarbars').style.background = color
     document.getElementById('config').style.background = color
     document.getElementById('stop').style.background = color
+    document.getElementById('assistant').style.background = color
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -79,6 +80,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
 
+      document.getElementById('assistant').addEventListener('click', function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'assistant' });
+        });
+      });
 
       setColor(sessionStorage.getItem('attack') == 'true'? 'red': '#40E0D0')
 
