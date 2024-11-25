@@ -86,6 +86,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
 
+      document.getElementById('timer').addEventListener('click', function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'set-timer' });
+        });
+      });
       setColor(sessionStorage.getItem('attack') == 'true'? 'red': '#40E0D0')
 
       

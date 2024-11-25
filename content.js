@@ -12,6 +12,22 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     sessionStorage.setItem('attack', 'false')
   }
 
+  if(request.action === 'set-timer'){
+    const time = prompt('time as HH:MM:SS:sss?')
+    const t = time.substring(0, 8)
+    const latency = time.split(':')[3]
+    document.querySelector('#command-data-form > h2').innerHTML = time + ' attack'
+    const inter = setInterval(() => {
+      x = document.querySelector('#date_arrival > span').innerHTML.trim().split(' ')
+      x = x[x.length - 1]
+      if(x === t){
+        clearInterval(inter);
+        setTimeout(() => {
+          document.querySelector('#troop_confirm_submit').click()
+        }, parseInt(latency));
+      }
+    }, 1);
+  }
 
   if (request.action === 'config') {
     const userInput = prompt("put you config");
