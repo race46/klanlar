@@ -228,6 +228,11 @@ async function handle_report(){
 
     }
   }
+  ba = JSON.parse(localStorage.getItem('barbars'))
+  Object.keys(storage).forEach((r)=> {
+    b = ba.find(b => `bot_${b.x}${b.y}` === r)
+    if(!b || storage[r]) delete storage[r]
+})
   localStorage.setItem("report_bots", JSON.stringify(storage))
 }
 
