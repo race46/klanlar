@@ -375,3 +375,34 @@ function deleteBarbarReports(){
 }
 
 deleteBarbarReports()
+
+function loot(){
+  const isLootAssistant = location.href.includes('screen=am_farm')
+  if(!isLootAssistant) return
+
+  const looter = parseInt(document.querySelector('form table tr:nth-child(2) td:nth-child(8) input').value)
+  let total = parseInt(document.querySelector('#units_home tr:nth-child(2) td:nth-child(7)').innerHTML)
+  const table = document.getElementById('plunder_list').querySelector('tbody')
+
+  let i = 2;
+
+  const interval = setInterval(() => {
+    try{
+      if(total < looter) {
+        clearInterval(interval)
+        return
+      }
+      const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
+      if(isGreen) table.children[i].querySelector('td:nth-child(9) > a').click()
+      total -= looter
+      i++
+    }catch(e){
+      clearInterval(interval)
+    }
+  }, 350);
+
+  setTimeout(() => {
+    location.reload()
+  }, parseInt(Math.random() * 180000 + 60000));
+}
+loot()
