@@ -377,6 +377,7 @@ function deleteBarbarReports(){
 deleteBarbarReports()
 
 function loot(){
+  botProtection()
   const isLootAssistant = location.href.includes('screen=am_farm')
   if(!isLootAssistant) return
 
@@ -387,6 +388,7 @@ function loot(){
   let i = 2;
 
   const interval = setInterval(() => {
+    botProtection()
     try{
       if(total < looter) {
         clearInterval(interval)
