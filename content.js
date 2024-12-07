@@ -294,7 +294,7 @@ async function attack() {
   botProtection()
 
 
-  if (location.href.includes('.klanlar.org/game.php') && sessionStorage.getItem('attack') == 'true') {
+  if (location.href.includes('.klanlar.org/game.php')) {
 
     if (location.href.endsWith('confirm')) {
       const oyuncu = document.querySelector('table.vis').querySelectorAll('td')[2].innerHTML == 'Oyuncu:'
@@ -303,16 +303,44 @@ async function attack() {
       }else{
           document.querySelector('#troop_confirm_submit').click()
       }
-    } else {
+    } else if(location.href.includes('screen=place')){
       await handle_report()
       // while(isFirstAttack(getNextVillage()))incrementCount()
-      config = JSON.parse(localStorage.getItem('config'))
+      configs = JSON.parse(localStorage.getItem('config'))
       village = getNextVillage()
       const isFirstConfig = isFirstAttack(village)
-      config = isFirstConfig ? config[0] : config[1]
+      config = isFirstConfig ? configs[0] : configs[1]
 
       enoughArmy = doesHaveEnoughArmy(config)
 
+      const loot_reported_village = sessionStorage.getItem('loot_reported_village')
+      sessionStorage.removeItem('loot_reported_village')
+      if(loot_reported_village){
+        config = configs[1]
+        enoughArmy = doesHaveEnoughArmy(config)
+
+        if(enoughArmy){
+          fillTable(config)
+          document.querySelector('#place_target > input').value = loot_reported_village
+          sessionStorage.setItem('loot_attacked', 'true')
+          await sleep(Math.floor(Math.random() * 1500) + 1500)
+          document.querySelector('#target_attack').click()
+        }else{
+          sessionStorage.setItem('last_unsuccessful_wall', "" + Date.now())
+          goLootAssistant()
+        }
+        await sleep(5000)
+      }
+      const is_loot_attacked = sessionStorage.getItem('loot_attacked')
+      if(is_loot_attacked){
+        sessionStorage.removeItem("loot_attacked")
+        goLootAssistant()
+        await sleep(5000)
+      }
+
+      if(sessionStorage.getItem('attack') !== 'true'){
+        await sleep(100000000)
+      }
       if(isFirstConfig){
         if(!enoughArmy){
           await sleep(120000)
@@ -376,13 +404,20 @@ function deleteBarbarReports(){
 
 deleteBarbarReports()
 
+const goPlace = () => {
+  const next_try = parseInt(sessionStorage.getItem('last_unsuccessful_wall') || 0) + (1000 * 60 * 60)
+  const should_try_now = Date.now() > next_try
+  if(should_try_now) document.querySelector('#quickbar_contents > ul > li:nth-child(5) > span > a').click()
+}
+const goLootAssistant= () => document.querySelector('#manager_icon_farm').click()
+
 function loot(){
   botProtection()
   const isLootAssistant = location.href.includes('screen=am_farm')
   if(!isLootAssistant) return
 
-  const looter = parseInt(document.querySelector('form table tr:nth-child(2) td:nth-child(8) input').value)
-  let total = parseInt(document.querySelector('#units_home tr:nth-child(2) td:nth-child(7)').innerHTML)
+  const looter = parseInt(document.querySelector('form table tr:nth-child(2) td:nth-child(7) input').value)
+  let total = parseInt(document.querySelector('#units_home tr:nth-child(2) td:nth-child(6)').innerHTML)
   const table = document.getElementById('plunder_list').querySelector('tbody')
 
   let i = 2;
@@ -396,12 +431,18 @@ function loot(){
       }
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
       if(isGreen) table.children[i].querySelector('td:nth-child(9) > a').click()
+      else {
+        const report_village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
+        sessionStorage.setItem('loot_reported_village', report_village)
+        total += looter
+        goPlace()
+      }
       total -= looter
       i++
     }catch(e){
       clearInterval(interval)
     }
-  }, 350);
+  }, 450);
 
   setTimeout(() => {
     location.reload()
