@@ -426,6 +426,7 @@ const goPlace = () => {
   const next_try = parseInt(sessionStorage.getItem('last_unsuccessful_wall') || 0) + (1000 * 60 * 60)
   const should_try_now = Date.now() > next_try
   if(should_try_now) document.querySelector('#quickbar_contents > ul > li:nth-child(5) > span > a').click()
+  else return true
 }
 const goLootAssistant= () => document.querySelector('#manager_icon_farm').click()
 
@@ -434,8 +435,6 @@ function loot(){
   const isLootAssistant = location.href.includes('screen=am_farm')
   if(!isLootAssistant) return
 
-  const looter = parseInt(document.querySelector('form table tr:nth-child(2) td:nth-child(7) input').value)
-  let total = parseInt(document.querySelector('#units_home tr:nth-child(2) td:nth-child(6)').innerHTML)
   const table = document.getElementById('plunder_list').querySelector('tbody')
 
   let i = 2;
@@ -461,7 +460,9 @@ function loot(){
       else {
         const report_village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
         sessionStorage.setItem('loot_reported_village', report_village)
-        goPlace()
+        const goo = goPlace()
+        if(goo) sessionStorage.removeItem('loot_reported_village')
+        if(!goo) clearInterval(interval)
       }
       i++
     }catch(e){
