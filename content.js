@@ -287,6 +287,24 @@ function incrementCount(){
   localStorage.setItem('count', '' + (count + 1))
 }
 
+const get_first_loot_config = () => [...document.querySelectorAll('#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(2) > td')].map(td => parseInt(td.querySelector('input') ? td.querySelector('input').value : '0'))
+const get_second_loot_config = () => [...document.querySelectorAll('#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(4) > td')].map(td => parseInt(td.querySelector('input') ? td.querySelector('input').value : '0'))
+const get_village_army = () => [...document.querySelectorAll('#farm_units > table > tbody > tr:nth-child(2) > td')].map(td => parseInt(td.innerText)).slice(1)
+
+const has_enough_army = (village_army, loot_army) => {
+  for(let i = 0; i < village_army.length; i++){
+    if(village_army[i] < loot_army[i]) return false
+  }
+
+  return true
+}
+
+const decrease_village_army = (village_army, loot_army) => {
+  for(let i = 0; i < village_army.length; i++){
+    village_army[i] -= loot_army[i]
+  }
+}
+
 async function attack() {
   await sleep(Math.floor(Math.random() * 4000) + 1000)
 
@@ -421,23 +439,30 @@ function loot(){
   const table = document.getElementById('plunder_list').querySelector('tbody')
 
   let i = 2;
-
+  const village_army = get_village_army()
+  const first_loot = get_first_loot_config()
+  const second_loot = get_second_loot_config()
   const interval = setInterval(() => {
     botProtection()
     try{
-      if(total < looter) {
-        clearInterval(interval)
-        return
-      }
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
-      if(isGreen) table.children[i].querySelector('td:nth-child(9) > a').click()
+      if(isGreen) {
+        if(has_enough_army(village_army, first_loot)){
+          table.children[i].querySelector('td:nth-child(9) > a').click()
+          decrease_village_army(village_army, first_loot)
+        }else if(has_enough_army(village_army, second_loot)){
+          table.children[i].querySelector('td:nth-child(10) > a').click()
+          decrease_village_army(village_army, second_loot)
+        }else{
+          clearInterval(interval)
+          return
+        }
+      }
       else {
         const report_village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
         sessionStorage.setItem('loot_reported_village', report_village)
-        total += looter
         goPlace()
       }
-      total -= looter
       i++
     }catch(e){
       clearInterval(interval)
