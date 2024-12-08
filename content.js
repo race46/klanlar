@@ -449,9 +449,7 @@ async function loot(){
     try{
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
       const village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
-      console.log(should_attack_now(village), village)
       if(!should_attack_now(village)) continue;
-      console.log('here')
       if(isGreen) {
         if(has_enough_army(village_army, first_loot)){
           table.children[i].querySelector('td:nth-child(9) > a').click()
