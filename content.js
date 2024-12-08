@@ -460,8 +460,8 @@ async function loot(){
           decrease_village_army(village_army, second_loot)
           update_village_last_attack(village)
         }else{
-          clearInterval(interval)
-          return
+          await sleep(4 * 60 * 1000)
+          location.reload()
         }
       }
       else {
