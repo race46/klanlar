@@ -461,6 +461,7 @@ async function loot(){
           update_village_last_attack(village)
         }else{
           await sleep(4 * 60 * 1000)
+          update_last_attacks()
           location.reload()
         }
       }
