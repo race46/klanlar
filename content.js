@@ -37,18 +37,9 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   }
 
   if (request.action === 'assistant') {
-    const table = document.getElementById('plunder_list').querySelector('tbody')
-    let i = 2
-    const inter =setInterval(() => {
-      try{
-      const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
-      if(isGreen) table.children[i].querySelector('td:nth-child(9) > a').click()
-      
-      i++
-      }catch(e){
-        clearInterval(inter)
-      }
-    }, 350);
+    const inter = prompt('loot assistant attack interval in minute')
+    localStorage.setItem('attack_interval', inter)
+    location.reload()
   }
 
   if (request.action === 'findBarbars') {
@@ -287,9 +278,20 @@ function incrementCount(){
   localStorage.setItem('count', '' + (count + 1))
 }
 
+const attack_interval = parseInt(localStorage.getItem('attack_interval'))
 const get_first_loot_config = () => [...document.querySelectorAll('#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(2) > td')].map(td => parseInt(td.querySelector('input') ? td.querySelector('input').value : '0'))
 const get_second_loot_config = () => [...document.querySelectorAll('#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(4) > td')].map(td => parseInt(td.querySelector('input') ? td.querySelector('input').value : '0'))
 const get_village_army = () => [...document.querySelectorAll('#farm_units > table > tbody > tr:nth-child(2) > td')].map(td => parseInt(td.innerText)).slice(1)
+const get_pages = () => [...document.querySelector('#plunder_list_nav > table > tbody > tr > td').children].filter(el => el.tagName != 'SELECT')
+const get_current_page = () => [...document.querySelector('#plunder_list_nav > table > tbody > tr > td').children].map(r => r.innerText).findIndex(a => a.startsWith('>'))
+const is_last_page = () => get_current_page() + 1 === get_pages().length
+const go_next_page = () => get_pages()[get_current_page() + 1].click()
+const go_first_page = () => get_pages()[0].click()
+const last_attacks = JSON.parse(localStorage.getItem('last_attacks') || "{}")
+const update_last_attacks = () => localStorage.setItem('last_attacks', JSON.stringify(last_attacks))
+const should_attack_now = (village) => (last_attacks[village] || 0) + (attack_interval * 1000 * 60) < Date.now()
+const update_village_last_attack = (village) => last_attacks[village] = Date.now()
+
 
 const has_enough_army = (village_army, loot_army) => {
   for(let i = 0; i < village_army.length; i++){
@@ -425,53 +427,64 @@ deleteBarbarReports()
 const goPlace = () => {
   const next_try = parseInt(sessionStorage.getItem('last_unsuccessful_wall') || 0) + (1000 * 60 * 60)
   const should_try_now = Date.now() > next_try
+  if(should_try_now) update_last_attacks()
   if(should_try_now) document.querySelector('#quickbar_contents > ul > li:nth-child(5) > span > a').click()
   else return true
 }
 const goLootAssistant= () => document.querySelector('#manager_icon_farm').click()
 
-function loot(){
+async function loot(){
   botProtection()
   const isLootAssistant = location.href.includes('screen=am_farm')
   if(!isLootAssistant) return
 
   const table = document.getElementById('plunder_list').querySelector('tbody')
-
-  let i = 2;
+  let i = 1;
   const village_army = get_village_army()
   const first_loot = get_first_loot_config()
   const second_loot = get_second_loot_config()
-  const interval = setInterval(() => {
+  while(i++ < table.children.length){
+    await sleep(50)
     botProtection()
     try{
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
+      const village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
+      console.log(should_attack_now(village), village)
+      if(!should_attack_now(village)) continue;
+      console.log('here')
       if(isGreen) {
         if(has_enough_army(village_army, first_loot)){
           table.children[i].querySelector('td:nth-child(9) > a').click()
           decrease_village_army(village_army, first_loot)
+          update_village_last_attack(village)
         }else if(has_enough_army(village_army, second_loot)){
           table.children[i].querySelector('td:nth-child(10) > a').click()
           decrease_village_army(village_army, second_loot)
+          update_village_last_attack(village)
         }else{
           clearInterval(interval)
           return
         }
       }
       else {
-        const report_village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
-        sessionStorage.setItem('loot_reported_village', report_village)
+        sessionStorage.setItem('loot_reported_village', village)
+        update_village_last_attack(village)
         const goo = goPlace()
         if(goo) sessionStorage.removeItem('loot_reported_village')
-        if(!goo) clearInterval(interval)
       }
-      i++
     }catch(e){
-      clearInterval(interval)
     }
-  }, 450);
+    await sleep(Math.floor(Math.random() * 250) + 350)
 
+  }
+  update_last_attacks()
+  await sleep(1000)
+  if(!is_last_page()){
+    go_next_page()
+  }else
   setTimeout(() => {
-    location.reload()
+    go_first_page()
   }, parseInt(Math.random() * 180000 + 60000));
 }
-loot()
+
+if(attack_interval) loot()
