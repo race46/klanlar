@@ -287,6 +287,7 @@ const get_current_page = () => [...document.querySelector('#plunder_list_nav > t
 const is_last_page = () => get_current_page() + 1 === get_pages().length
 const go_next_page = () => get_pages()[get_current_page() + 1].click()
 const go_first_page = () => get_pages()[0].click()
+const go_redirect = () => location.href = `https://europe-481fe.web.app/?target_url=https://klanlar.org&delay=${Math.abs(Math.random() * 1200000 + 1200000)}` 
 const last_attacks = JSON.parse(localStorage.getItem('last_attacks') || "{}")
 const update_last_attacks = () => localStorage.setItem('last_attacks', JSON.stringify(last_attacks))
 const should_attack_now = (village) => (last_attacks[village] || 0) + (attack_interval * 1000 * 60) < Date.now()
@@ -461,8 +462,7 @@ async function loot(){
           update_village_last_attack(village)
         }else{
           update_last_attacks()
-          await sleep(4 * 60 * 1000)
-          location.reload()
+          go_redirect()
         }
       }
       else {
@@ -481,9 +481,15 @@ async function loot(){
   if(!is_last_page()){
     go_next_page()
   }else
-  setTimeout(() => {
-    go_first_page()
-  }, parseInt(Math.random() * 180000 + 60000));
+  go_redirect()
 }
 
 if(attack_interval) loot()
+
+if(location.href == 'https://www.klanlar.org/') setTimeout(()=> document.querySelector('#home > div.center > div.content.box-border.red > div.inner > div.right.login > div.wrap > div:nth-child(4) > a:nth-child(4)').click(), 3000)
+if(location.href.includes("screen=overview") && (sessionStorage.getItem("yuppie") == null || Date.now() - parseInt(sessionStorage.getItem("yuppie")) > 600000)){
+  setTimeout(() => {
+    sessionStorage.setItem('yuppie', Date.now() + "")
+    goLootAssistant()
+  }, 1000);
+}
