@@ -287,7 +287,7 @@ const get_current_page = () => [...document.querySelector('#plunder_list_nav > t
 const is_last_page = () => get_current_page() + 1 === get_pages().length
 const go_next_page = () => get_pages()[get_current_page() + 1].click()
 const go_first_page = () => get_pages()[0].click()
-const go_redirect = () => location.href = `https://europe-481fe.web.app/?target_url=https://klanlar.org&delay=${Math.abs(Math.random() * 1200000 + 1200000)}` 
+const go_redirect = () => location.href = `https://europe-481fe.web.app/?target_url=https://klanlar.org&delay=${Math.abs(Math.random() * 1200 + 1200)}` 
 const last_attacks = JSON.parse(localStorage.getItem('last_attacks') || "{}")
 const update_last_attacks = () => localStorage.setItem('last_attacks', JSON.stringify(last_attacks))
 const should_attack_now = (village) => (last_attacks[village] || 0) + (attack_interval * 1000 * 60) < Date.now()
