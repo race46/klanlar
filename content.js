@@ -465,7 +465,7 @@ async function loot(){
           go_redirect()
         }
       }
-      else {
+      else if(!table.children[i].querySelector('td:nth-child(4) > img')){
         sessionStorage.setItem('loot_reported_village', village)
         update_village_last_attack(village)
         const goo = goPlace()
@@ -487,7 +487,7 @@ async function loot(){
 if(attack_interval) loot()
 
 if(location.href == 'https://www.klanlar.org/') setTimeout(()=> document.querySelector('#home > div.center > div.content.box-border.red > div.inner > div.right.login > div.wrap > div:nth-child(4) > a:nth-child(4)').click(), 3000)
-if(location.href.includes("screen=overview") && (sessionStorage.getItem("yuppie") == null || Date.now() - parseInt(sessionStorage.getItem("yuppie")) > 600000)){
+if(location.href.includes("screen=overview") && attack_interval && (sessionStorage.getItem("yuppie") == null || Date.now() - parseInt(sessionStorage.getItem("yuppie")) > 600000)){
   setTimeout(() => {
     sessionStorage.setItem('yuppie', Date.now() + "")
     goLootAssistant()
