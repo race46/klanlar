@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
 
     document.title = 'found: 0'
 
-    village_location = document.querySelector('#menu_row2 > td:nth-child(2) > b').innerText.substring(1, 8);
+    village_location = (document.querySelector('#menu_row2 > td:nth-child(2) > b') ?? document.querySelector('#menu_row2 > td:nth-child(4) > b')).innerText.substring(1, 8);
     x = parseInt(village_location.substring(0, 3));
     y = parseInt(village_location.substring(4, 7));
 
@@ -382,7 +382,9 @@ async function attack() {
   else {
   }
 }
-attack()
+if(sessionStorage.getItem('attack') == 'true') attack()
+
+
 
 function deleteBarbarReports(){
   if(!location.href.includes('screen=report')) return;
@@ -486,10 +488,17 @@ async function loot(){
 
 if(attack_interval) loot()
 
-if(location.href == 'https://www.klanlar.org/') setTimeout(()=> document.querySelector('#home > div.center > div.content.box-border.red > div.inner > div.right.login > div.wrap > div:nth-child(4) > a:nth-child(4)').click(), 3000)
+if(location.href == 'https://www.klanlar.org/') setTimeout(()=> document.querySelector('#home > div.center > div.content.box-border.red > div.inner > div.right.login > div.wrap > div:nth-child(4) > a:nth-child(3)').click(), 3000)
 if(location.href.includes("screen=overview") && attack_interval && (sessionStorage.getItem("yuppie") == null || Date.now() - parseInt(sessionStorage.getItem("yuppie")) > 600000)){
   setTimeout(() => {
     sessionStorage.setItem('yuppie', Date.now() + "")
     goLootAssistant()
   }, 1000);
 }
+
+setInterval(() => {
+  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
+  if(isBotPro){
+    location.href = 'https://www.fuck.com'
+    }
+}, 5000);
