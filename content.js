@@ -382,7 +382,7 @@ async function attack() {
   else {
   }
 }
-if(sessionStorage.getItem('attack') == 'true') attack()
+if(sessionStorage.getItem('attack') == 'true' || attack_interval) attack()
 
 
 
