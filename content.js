@@ -179,6 +179,34 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
   }
 });
 
+
+const set = async (key, value) => {
+  return new Promise((res, rej) => {
+    chrome.storage.local.set({ [key]: value
+    }, function () {
+      res(true)
+    });
+  })
+}
+
+const get = async (key) => {
+  return new Promise((res, rej) => {
+    chrome.storage.local.get([key], function (result) {
+      res(result[key])
+    }
+    );
+  })
+}
+
+const remove = async (key) => {
+  return new Promise((res, rej) => {
+    chrome.storage.local.remove([key], function () {
+      res(true)
+    }
+    );
+  })
+}
+
 async function sleep(time) {
   return new Promise((res, rej) => {
     setTimeout(() => {
@@ -287,11 +315,63 @@ const get_current_page = () => [...document.querySelector('#plunder_list_nav > t
 const is_last_page = () => get_current_page() + 1 === get_pages().length
 const go_next_page = () => get_pages()[get_current_page() + 1].click()
 const go_first_page = () => get_pages()[0].click()
-const go_redirect = () => location.href = `https://europe-481fe.web.app/?target_url=https://klanlar.org&delay=${Math.abs(Math.random() * 1200 + 1200)}` 
+
+const go_random_pages = async () => {
+  const list = [
+    document.querySelector('#menu_row > td:nth-child(2) > a'),
+    document.querySelector('#header_menu_link_map > a'),
+    document.querySelector('#menu_row > td:nth-child(4) > a'),
+    document.querySelector('#menu_row > td:nth-child(5) > a'),
+    document.querySelector('#topdisplay > div > table > tbody > tr:nth-child(9) > td > a')
+  ]
+  await sleep(Math.random() * 1000 + 1000)
+
+  list.get_random = function () {
+    return this[Math.floor(Math.random() * this.length)]
+  }
+
+  list.get_random().click()
+}
+
+const go_redirect = async () => {
+  const url = location.href
+  const pre = url.split('.')[0].substring(8)
+  await set("world", pre)
+  const hours = new Date().getHours()
+  let delay = 1800
+  let variance = 600
+  if(hours < 8){
+    delay = 3600
+    variance = 1200
+  }
+  const started = await get('started')
+  if(started == null) {
+    await set('started', parseInt(Math.random() * 10))
+    return go_random_pages()
+  }if(started <= 0){
+    await remove('started')
+  }else{
+    await set('started', started - 1)
+    return go_random_pages()
+  }
+  location.href = `https://europe-481fe.web.app/?target_url=https://klanlar.org&delay=${Math.abs(Math.random() * variance + delay)}` 
+}
 const last_attacks = JSON.parse(localStorage.getItem('last_attacks') || "{}")
 const update_last_attacks = () => localStorage.setItem('last_attacks', JSON.stringify(last_attacks))
 const should_attack_now = (village) => (last_attacks[village] || 0) + (attack_interval * 1000 * 60) < Date.now()
 const update_village_last_attack = (village) => last_attacks[village] = Date.now()
+const go_world = async () => {
+  const world = await get('world')
+
+  const w_con = document.querySelector('div.worlds-container')
+
+  w_con.querySelectorAll('a').forEach(a => {
+    if(a.href.includes(world)) a.click()
+  }
+  )
+}
+
+
 
 
 const has_enough_army = (village_army, loot_army) => {
@@ -485,10 +565,15 @@ async function loot(){
   }else
   go_redirect()
 }
+get('started').then(r => {
+  if(r != null){
+    go_redirect()
+  }else{
+    if(attack_interval) loot()
+  }
+})
 
-if(attack_interval) loot()
-
-if(location.href == 'https://www.klanlar.org/') setTimeout(()=> document.querySelector('#home > div.center > div.content.box-border.red > div.inner > div.right.login > div.wrap > div:nth-child(4) > a:nth-child(3)').click(), 3000)
+if(location.href == 'https://www.klanlar.org/') setTimeout(go_world, 3000)
 if(location.href.includes("screen=overview") && attack_interval && (sessionStorage.getItem("yuppie") == null || Date.now() - parseInt(sessionStorage.getItem("yuppie")) > 600000)){
   setTimeout(() => {
     sessionStorage.setItem('yuppie', Date.now() + "")
