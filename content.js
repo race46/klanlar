@@ -582,7 +582,8 @@ if(location.href.includes("screen=overview") && attack_interval && (sessionStora
 }
 
 setInterval(() => {
-  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
+  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check') || document.querySelector("td.bot-protection-row") || document.querySelector("div.bot-protection-row")
+  console.log(isBotPro)
   if(isBotPro){
     location.href = 'https://www.fuck.com'
     }
