@@ -217,7 +217,7 @@ async function sleep(time) {
 
 
 async function handle_report(){
-
+  return
   const now = Date.now()
   const next_report = parseInt(localStorage.getItem("next_report") || "0")
   if(now < next_report) return
@@ -279,12 +279,16 @@ function isFirstAttack(village){
 }
 
 function getNextVillage(){
-  const count = parseInt(localStorage.getItem("count") || "0")
+  try{
+    const count = parseInt(localStorage.getItem("count") || "0")
 
-  const barbars = JSON.parse(localStorage.getItem('barbars'))
-  const village = barbars[count % barbars.length]
-
-  return village
+    const barbars = JSON.parse(localStorage.getItem('barbars'))
+    const village = barbars[count % barbars.length]
+  
+    return village
+  }catch(e){
+    return {x:0, y:0}
+  }
 }
 
 async function attackButtonClick(village){
@@ -582,7 +586,7 @@ if(location.href.includes("screen=overview") && attack_interval && (sessionStora
 }
 
 setInterval(() => {
-  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check') || document.querySelector("td.bot-protection-row") || document.querySelector("div.bot-protection-row")
+  isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check') || document.querySelector("td.bot-protection-row") || document.querySelector("div.bot-protection-row") || document.querySelector("#botprotection_quest")
   if(isBotPro){
     location.href = 'https://www.fuck.com'
     }
