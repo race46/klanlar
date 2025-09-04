@@ -301,7 +301,7 @@ async function attackButtonClick(village){
 function botProtection(){
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
   if(isBotPro && sessionStorage.getItem('attack') == 'true'){
-    location.href = 'https://www.fuck.com'
+    sendTelegramMessage().then(() => location.href = 'https://www.fuck.com')
   }
 }
 
@@ -475,7 +475,7 @@ function deleteBarbarReports(){
 
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check')
   if(isBotPro && sessionStorage.getItem('attack') == 'true'){
-    location.href = 'https://www.fuck.com'
+    sendTelegramMessage().then(() => location.href = 'https://www.fuck.com')
   }
 
 
@@ -588,6 +588,24 @@ if(location.href.includes("screen=overview") && attack_interval && (sessionStora
 setInterval(() => {
   isBotPro = document.querySelectorAll('iframe').length > 0 || document.querySelector('#bot_check') || document.querySelector("td.bot-protection-row") || document.querySelector("div.bot-protection-row") || document.querySelector("#botprotection_quest")
   if(isBotPro){
-    location.href = 'https://www.fuck.com'
+    sendTelegramMessage().then(() => location.href = 'https://www.fuck.com')
     }
 }, 5000);
+
+
+
+function sendTelegramMessage(){
+  const CHAT_ID = JSON.parse(localStorage.getItem('config'))[0].chat_id
+  const TOKEN = "8304581810:AAG-Zmxu77TCjBYa4OzgdEpO6mfjvIiNM9Y"; // your bot token
+  const MESSAGE = "Davşan Çavuş nerdedir?";
+
+  return fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: MESSAGE
+    })
+  })
+    .then(() => true)
+}
