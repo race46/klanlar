@@ -595,7 +595,7 @@ setInterval(() => {
 
 
 function sendTelegramMessage(){
-  const CHAT_ID = JSON.parse(localStorage.getItem('config'))[0].chat_id
+  const CHAT_ID = JSON.parse(localStorage.getItem('config'))[2].chat_id
   const TOKEN = "8304581810:AAG-Zmxu77TCjBYa4OzgdEpO6mfjvIiNM9Y"; // your bot token
   const MESSAGE = "Davşan Çavuş nerdedir?";
 
