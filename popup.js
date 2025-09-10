@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
 
+      document.getElementById('pre-bot').addEventListener('click', function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'startPreBot' });
+        });
+      });
+
       document.getElementById('stop').addEventListener('click', function () {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
           chrome.tabs.sendMessage(tabs[0].id, { action: 'stop' });

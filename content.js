@@ -6,6 +6,10 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     location.reload()
   }
 
+  if (request.action === 'startPreBot') {
+    startPreBot()
+  }
+
   if (request.action === 'stop') {
     barbars = JSON.parse(localStorage.getItem('barbars'))
 
@@ -178,6 +182,21 @@ chrome.runtime.onMessage.addListener(async function (request, sender, sendRespon
     alert('search completed')
   }
 });
+
+
+const script = document.createElement("script");
+script.src = chrome.runtime.getURL("./injo.js");
+(document.head || document.documentElement).appendChild(script);
+
+window.addEventListener("message", (event) => {
+  if (event.source !== window) return;
+  if (event.data.type === "FROM_PAGE") {
+    // console.log("Got data from page:", event.data.value);
+  }
+});
+
+
+const recoverAll = () =>  window.postMessage({ type: "FROM_PAGE", value: 'hey bitch' }, "*");
 
 
 const set = async (key, value) => {
@@ -608,4 +627,45 @@ function sendTelegramMessage(){
     })
   })
     .then(() => true)
+}
+
+let lastBuy = 0
+
+function confirm(inputs) {
+    lastBuy = Date.now()
+    setTimeout(() => { document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 100)
+    setTimeout(() => {
+      recoverAll()
+    }, 200);
+}
+
+
+function buy() {
+    const submit = document.querySelector('input.btn.float_right.btn-premium-exchange-buy')
+    const wood_stock = parseInt(document.getElementById('premium_exchange_stock_wood').innerText) - 125
+    const kil_stock = parseInt(document.getElementById('premium_exchange_stock_stone').innerText) - 125
+    const iron_stock = parseInt(document.getElementById('premium_exchange_stock_iron').innerText) - 125
+
+    const inputs = document.querySelectorAll('div.premium-exchange-sep > input')
+
+    if(wood_stock > 0 && wood_stock >= kil_stock && wood_stock >= iron_stock) {inputs[0].value = wood_stock; submit.click(); confirm();}
+    else if(kil_stock > 0 && kil_stock >= wood_stock && kil_stock >= iron_stock) {inputs[1].value = kil_stock; submit.click(); confirm();}
+    else if(iron_stock > 0 && iron_stock >= kil_stock && iron_stock >= wood_stock) {inputs[2].value = iron_stock; submit.click(); confirm();}
+
+    setTimeout(() => {
+      if(inputs[0].value){inputs[0].value = '';}
+      if(inputs[1].value){inputs[1].value = ''; }
+      if(inputs[2].value){inputs[2].value = ''; }
+
+      recoverAll()
+    }, 250);
+
+}
+
+
+
+function startPreBot(){
+  setInterval(() => {
+    if(lastBuy + 10000 < Date.now() ) buy()
+  }, 100);
 }

@@ -22,6 +22,12 @@
         "matches": ["https://*.klanlar.org/**"],
         "js": ["content.js"]
       }
-    ]
+    ],
+    "web_accessible_resources": [
+    {
+      "resources": ["injo.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
   }
   
