@@ -642,9 +642,9 @@ function confirm(inputs) {
 
 function buy() {
     const submit = document.querySelector('input.btn.float_right.btn-premium-exchange-buy')
-    const wood_stock = parseInt(document.getElementById('premium_exchange_stock_wood').innerText) - 125
-    const kil_stock = parseInt(document.getElementById('premium_exchange_stock_stone').innerText) - 125
-    const iron_stock = parseInt(document.getElementById('premium_exchange_stock_iron').innerText) - 125
+    const wood_stock = Math.max(parseInt(document.getElementById('premium_exchange_stock_wood').innerText) - 125, 2500)
+    const kil_stock = Math.max(parseInt(document.getElementById('premium_exchange_stock_stone').innerText) - 125, 2500)
+    const iron_stock = Math.max(parseInt(document.getElementById('premium_exchange_stock_iron').innerText) - 125, 2500)
 
     const inputs = document.querySelectorAll('div.premium-exchange-sep > input')
 
