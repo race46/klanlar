@@ -103,5 +103,5 @@ setTimeout(() => {
   setInterval(() => {
     if(location.href.endsWith('&screen=market&mode=exchange'))
     window.PremiumExchange.loadData()
-  }, 2500);
-}, 2500);
+  }, 10000);
+}, 5000);
