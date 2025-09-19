@@ -556,9 +556,10 @@ async function loot(){
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
       const wallLevel = parseInt(table.children[i].querySelector('td:nth-child(7)').innerText)
       const isWallExists = !isNaN(wallLevel) && wallLevel > 0;
+      const zeroWall = !isNaN(wallLevel) && wallLevel === 0;
       const village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
       if(!should_attack_now(village)) continue;
-      if(isGreen && !isWallExists) {
+      if(zeroWall || (isGreen && !isWallExists)) {
         if(has_enough_army(village_army, first_loot)){
           table.children[i].querySelector('td:nth-child(9) > a').click()
           decrease_village_army(village_army, first_loot)
