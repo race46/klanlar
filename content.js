@@ -554,9 +554,11 @@ async function loot(){
     botProtection()
     try{
       const isGreen = table.children[i].querySelector('td:nth-child(2) > img').src.includes('green')
+      const wallLevel = parseInt(table.children[i].querySelector('td:nth-child(7)').innerText)
+      const isWallExists = !isNaN(wallLevel) && wallLevel > 0;
       const village = table.children[i].querySelector('td:nth-child(4) > a').innerText.trim().substr(1,7)
       if(!should_attack_now(village)) continue;
-      if(isGreen) {
+      if(isGreen && !isWallExists) {
         if(has_enough_army(village_army, first_loot)){
           table.children[i].querySelector('td:nth-child(9) > a').click()
           decrease_village_army(village_army, first_loot)
@@ -633,7 +635,7 @@ let lastBuy = 0
 
 function confirm(inputs) {
     lastBuy = Date.now()
-    setTimeout(() => { document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 100)
+    setTimeout(() => { document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 200)
     setTimeout(() => {
       recoverAll()
     }, 200);
