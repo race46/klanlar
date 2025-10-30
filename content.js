@@ -636,10 +636,17 @@ let lastBuy = 0
 
 function confirm(inputs) {
     lastBuy = Date.now()
-    setTimeout(() => { document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 200)
+    setTimeout(() => {document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 200)
+    const int = setInterval(() => {
+      const btn = document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes');
+      if(btn != null){
+        clearInterval(int);
+        btn.click();
+      }
+    }, 50);
     setTimeout(() => {
       recoverAll()
-    }, 200);
+    }, 500);
 }
 
 
