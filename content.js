@@ -637,13 +637,20 @@ let lastBuy = 0
 function confirm(inputs) {
     lastBuy = Date.now()
     setTimeout(() => {document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes').click()}, 200)
+    let clicked = false;
     const int = setInterval(() => {
       const btn = document.querySelector('button.btn.evt-confirm-btn.btn-confirm-yes');
       if(btn != null){
         clearInterval(int);
+        if(!clicked)
         btn.click();
+        clicked = true;
+
+        setTimeout(() => {
+          document.querySelector('#premium_exchange > div > div > div.confirmation-buttons > button').click()
+        }, 1000);
       }
-    }, 50);
+    }, 100);
     setTimeout(() => {
       recoverAll()
     }, 500);
@@ -652,9 +659,9 @@ function confirm(inputs) {
 
 function buy() {
     const submit = document.querySelector('input.btn.float_right.btn-premium-exchange-buy')
-    const wood_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_wood').innerText) - 125, 2500)
-    const kil_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_stone').innerText) - 125, 2500)
-    const iron_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_iron').innerText) - 125, 2500)
+    const wood_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_wood').innerText) - 125, 12500)
+    const kil_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_stone').innerText) - 125, 12500)
+    const iron_stock = Math.min(parseInt(document.getElementById('premium_exchange_stock_iron').innerText) - 125, 12500)
 
     const inputs = document.querySelectorAll('div.premium-exchange-sep > input')
 
