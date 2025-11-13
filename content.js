@@ -357,14 +357,10 @@ const go_random_pages = async () => {
 }
 
 const ifNotInitialVillageGoNextVillage = () => {
-  let currentVillage = new URLSearchParams(window.location.search).get("village")
+  let currentVillage = new URLSearchParams(document.querySelector('#menu_row2_village > a').search).get("village")
 
   if(currentVillage == null){
     return false
-  }
-
-  if(!currentVillage.startsWith("n")){
-    currentVillage = "n" + currentVillage;
   }
 
   const initialVillage = sessionStorage.getItem("initial_village")
@@ -388,8 +384,9 @@ const ifNotInitialVillageGoNextVillage = () => {
 }
 
 const go_redirect = async () => {
-  const hasNextVillage = ifNotInitialVillageGoNextVillage()
+  const started = await get('started')
 
+  const hasNextVillage = started == null ? ifNotInitialVillageGoNextVillage() : false
   if(hasNextVillage) return
 
   const url = location.href
@@ -402,7 +399,6 @@ const go_redirect = async () => {
     delay = 3600
     variance = 1200
   }
-  const started = await get('started')
   if(started == null) {
     await set('started', parseInt(Math.random() * 10))
     return go_random_pages()
