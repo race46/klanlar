@@ -356,7 +356,42 @@ const go_random_pages = async () => {
   list.get_random().click()
 }
 
+const ifNotInitialVillageGoNextVillage = () => {
+  let currentVillage = new URLSearchParams(window.location.search).get("village")
+
+  if(currentVillage == null){
+    return false
+  }
+
+  if(!currentVillage.startsWith("n")){
+    currentVillage = "n" + currentVillage;
+  }
+
+  const initialVillage = sessionStorage.getItem("initial_village")
+
+  if(initialVillage == null){
+    sessionStorage.setItem("initial_village", currentVillage)
+  }else if(initialVillage === currentVillage){
+    sessionStorage.removeItem("initial_village")
+    return false
+  }
+
+  const nextButton = document.querySelector('#village_switch_right')
+
+  if(nextButton == null){
+    return false
+  }
+
+  nextButton.click()
+
+  return true;
+}
+
 const go_redirect = async () => {
+  const hasNextVillage = ifNotInitialVillageGoNextVillage()
+
+  if(hasNextVillage) return
+
   const url = location.href
   const pre = url.split('.')[0].substring(8)
   await set("world", pre)
@@ -528,7 +563,7 @@ function deleteBarbarReports(){
   // }, 20000);
 }
 
-deleteBarbarReports()
+// deleteBarbarReports()
 
 const goPlace = () => {
   const next_try = parseInt(sessionStorage.getItem('last_unsuccessful_wall') || 0) + (1000 * 60 * 60)
