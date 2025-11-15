@@ -344,7 +344,7 @@ const go_random_pages = async () => {
     document.querySelector('#menu_row > td:nth-child(2) > a'),
     document.querySelector('#header_menu_link_map > a'),
     document.querySelector('#menu_row > td:nth-child(4) > a'),
-    document.querySelector('#menu_row > td:nth-child(5) > a'),
+    document.querySelector('#quickbar_contents > ul > li:nth-child(2) > span > a'),
     document.querySelector('#topdisplay > div > table > tbody > tr:nth-child(9) > td > a')
   ]
   await sleep(Math.random() * 1000 + 1000)
@@ -403,7 +403,11 @@ const go_redirect = async () => {
     await set('started', parseInt(Math.random() * 10))
     return go_random_pages()
   }if(started <= 0){
+    const first_time = await get('init_random_page')
+    await remove('init_random_page')
     await remove('started')
+
+    if(first_time) return goLootAssistant()
   }else{
     await set('started', started - 1)
     return go_random_pages()
@@ -416,6 +420,8 @@ const should_attack_now = (village) => (last_attacks[village] || 0) + (attack_in
 const update_village_last_attack = (village) => last_attacks[village] = Date.now()
 const go_world = async () => {
   const world = await get('world')
+  await set('started', Math.floor(2 + (Math.random() * 10)))
+  await set('init_random_page', 'yes')
 
   const w_con = document.querySelector('div.worlds-container')
 
